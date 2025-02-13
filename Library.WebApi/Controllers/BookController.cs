@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Library.Application.DTOs.Books;
+﻿using Library.Application.DTOs.Books;
 using Library.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 

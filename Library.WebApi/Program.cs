@@ -1,5 +1,4 @@
 using Library.Application;
-using Library.Application.Common.Exceptions;
 using Library.Application.Common.Mapping;
 using Library.Application.Interfaces;
 using Library.Infrastructure;

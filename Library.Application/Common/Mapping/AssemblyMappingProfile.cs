@@ -1,18 +1,13 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Library.Application.Common.Mapping
 {
     public class AssemblyMappingProfile : Profile
     {
         public AssemblyMappingProfile()
-        { 
-        
+        {
+
         }
 
         public AssemblyMappingProfile(Assembly assembly)

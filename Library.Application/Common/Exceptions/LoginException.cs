@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Application.Common.Exceptions
+﻿namespace Library.Application.Common.Exceptions
 {
     public class LoginException : Exception
     {
-        public LoginException() 
+        public LoginException()
             : base($"Invalid email or password")
         {
 

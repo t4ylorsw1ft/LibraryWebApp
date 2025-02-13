@@ -1,11 +1,6 @@
 ﻿using Library.Application.Interfaces.Repositories;
 using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Library.Infrastructure.Repositories
 {
@@ -47,7 +42,7 @@ namespace Library.Infrastructure.Repositories
 
         public async Task<bool> ActiveBorrowExistsAsync(Guid userId, Guid bookId)
         {
-            return await _context.BookBorrows.AnyAsync(bb => bb.UserId ==  userId && bb.BookId == bookId && !bb.IsReturned);
+            return await _context.BookBorrows.AnyAsync(bb => bb.UserId == userId && bb.BookId == bookId && !bb.IsReturned);
         }
     }
 }

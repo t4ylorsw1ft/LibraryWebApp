@@ -1,11 +1,6 @@
 ﻿using Library.Application.Interfaces.Repositories;
 using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Library.Infrastructure.Repositories
 {
@@ -13,8 +8,8 @@ namespace Library.Infrastructure.Repositories
     {
         private readonly AppDbContext _context;
 
-        public BookRepository(AppDbContext context) 
-        { 
+        public BookRepository(AppDbContext context)
+        {
             _context = context;
         }
 

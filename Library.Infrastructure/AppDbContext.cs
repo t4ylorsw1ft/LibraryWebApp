@@ -12,7 +12,7 @@ namespace Library.Infrastructure
         public DbSet<Book> Books { get; set; }
         public DbSet<BookBorrow> BookBorrows { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) 
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

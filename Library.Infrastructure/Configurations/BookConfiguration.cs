@@ -27,7 +27,10 @@ namespace Library.Infrastructure.Configurations
                 .IsRequired()
                 .HasMaxLength(50);
 
-            builder.Property(b => b.IsAvaliable)
+            builder.Property(b => b.Quantity)
+                .IsRequired();
+
+            builder.Property(b => b.AvaliableQuantity)
                 .IsRequired();
 
             builder.Property(b => b.Description)
@@ -45,6 +48,8 @@ namespace Library.Infrastructure.Configurations
                 .WithOne(bb => bb.Book)
                 .HasForeignKey(bb => bb.BookId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasIndex(u => u.ISBN).IsUnique();
         }
     }
 

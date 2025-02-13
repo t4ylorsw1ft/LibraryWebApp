@@ -14,7 +14,8 @@ namespace Library.Domain.Entities
         public string Title { get; set; } = string.Empty;
         public string Genre { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public bool IsAvaliable { get; set; }
+        public int Quantity { get; set; }
+        public int AvaliableQuantity { get; set; }
 
         public string? ImagePath { get; set; }
 

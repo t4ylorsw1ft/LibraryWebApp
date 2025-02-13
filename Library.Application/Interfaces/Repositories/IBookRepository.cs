@@ -17,6 +17,7 @@ namespace Library.Application.Interfaces.Repositories
         Task<Book> AddAsync(Book book);
         Task<Book> UpdateAsync(Book book);
         Task<bool> DeleteAsync(Guid id);
+        Task<bool> ExistsAsync(Guid id);
     }
 
 }

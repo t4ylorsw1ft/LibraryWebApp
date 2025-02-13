@@ -78,5 +78,10 @@ namespace Library.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await _context.Books.AnyAsync(b => b.Id == id);
+        }
     }
 }

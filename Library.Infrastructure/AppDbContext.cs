@@ -1,10 +1,11 @@
-﻿using Library.Domain.Entities;
+﻿using Library.Application.Interfaces;
+using Library.Domain.Entities;
 using Library.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastructure
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : DbContext, IAppDbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Author> Authors { get; set; }

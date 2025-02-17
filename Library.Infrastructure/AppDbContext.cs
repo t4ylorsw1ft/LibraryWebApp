@@ -1,6 +1,7 @@
 ﻿using Library.Application.Interfaces;
 using Library.Domain.Entities;
 using Library.Infrastructure.Configurations;
+using Library.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastructure
@@ -13,7 +14,26 @@ namespace Library.Infrastructure
         public DbSet<BookBorrow> BookBorrows { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
-            : base(options) { }
+            : base(options) 
+        {
+            Database.EnsureCreated();
+
+            if (!Users.Any())
+            {
+                var admin = new User
+                {
+                    Username = "admin",
+                    Email = "admin@mail.ru",
+                    PasswordHash = "$2a$11$TJlQpqthplkTTIO30qfKYed0/nXXcfHVu/SszmD2U2K6cdDmB/z3q",
+                    RefreshToken = "aaaaaa",
+                    Role = UserRole.Admin
+                };
+
+
+                Users.Add(admin);
+                SaveChanges();
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

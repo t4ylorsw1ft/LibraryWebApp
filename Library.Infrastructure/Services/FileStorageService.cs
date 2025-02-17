@@ -32,7 +32,7 @@ namespace Library.Infrastructure.Services
         {
             var filePath = Path.Combine(_uploadPath, fileName);
             await File.WriteAllBytesAsync(filePath, fileData);
-            return Path.Combine("uploads", fileName).Replace("\\", "/");
+            return fileName;
         }
 
         public async Task<byte[]> GetFileAsync(string filePath)

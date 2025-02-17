@@ -1,4 +1,4 @@
-﻿namespace Library.Application.DTOs
+﻿namespace Library.Application.DTOs.Users
 {
     public class JwtPairDto
     {

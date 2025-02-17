@@ -5,7 +5,7 @@ using Library.Domain.Entities;
 
 namespace Library.Application.DTOs.Authors
 {
-    public class AuthorLookupDto : IMapWith<Book>
+    public class AuthorLookupDto : IMapWith<Author>
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
@@ -14,7 +14,7 @@ namespace Library.Application.DTOs.Authors
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<CreateBookDto, Book>();
+            profile.CreateMap<Author, AuthorLookupDto>();
         }
     }
 }

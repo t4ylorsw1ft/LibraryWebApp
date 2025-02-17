@@ -1,0 +1,23 @@
+services:
+    library.webapi:
+        image: ${DOCKER_REGISTRY-}librarywebapi
+        build:
+            context: .
+            dockerfile: Library.WebApi/Dockerfile
+        ports:
+            - "57894:8080"
+            - "57895:8081"
+        depends_on:
+            - sqlserver
+    sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        container_name: sqlserver
+        environment:
+          SA_PASSWORD: "Ivan!5000"
+          ACCEPT_EULA: "Y"
+        ports:
+            - "1433:1433"
+        volumes:
+            - sql_data:/var/opt/mssql
+volumes:
+    sql_data:

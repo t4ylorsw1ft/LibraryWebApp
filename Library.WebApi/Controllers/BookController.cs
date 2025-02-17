@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.WebApi.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -18,6 +17,12 @@ namespace Library.WebApi.Controllers
             _bookService = bookService;
         }
 
+        /// <summary>
+        /// Get a paginated list of books.
+        /// </summary>
+        /// <param name="page">Page number.</param>
+        /// <param name="size">Number of books per page.</param>
+        /// <returns>A list of books.</returns>
         [HttpGet]
         public async Task<ActionResult<List<BookLookupDto>>> GetAllPaged([FromQuery] int page, [FromQuery] int size)
         {
@@ -25,6 +30,11 @@ namespace Library.WebApi.Controllers
             return Ok(books);
         }
 
+        /// <summary>
+        /// Get all books by a specific author.
+        /// </summary>
+        /// <param name="authorId">Author's ID.</param>
+        /// <returns>A list of books by the author.</returns>
         [HttpGet("author/{authorId}")]
         public async Task<ActionResult<List<BookLookupDto>>> GetAllByAuthor(Guid authorId)
         {
@@ -32,6 +42,11 @@ namespace Library.WebApi.Controllers
             return Ok(books);
         }
 
+        /// <summary>
+        /// Get a book by its ID.
+        /// </summary>
+        /// <param name="id">Book's ID.</param>
+        /// <returns>Details of the book.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<BookDetailsDto>> GetById(Guid id)
         {
@@ -39,6 +54,11 @@ namespace Library.WebApi.Controllers
             return Ok(book);
         }
 
+        /// <summary>
+        /// Get a book by its ISBN.
+        /// </summary>
+        /// <param name="isbn">Book's ISBN.</param>
+        /// <returns>Details of the book.</returns>
         [HttpGet("isbn/{isbn}")]
         public async Task<ActionResult<BookDetailsDto>> GetByISBN(string isbn)
         {
@@ -46,6 +66,12 @@ namespace Library.WebApi.Controllers
             return Ok(book);
         }
 
+        /// <summary>
+        /// Create a new book.
+        /// Requires Admin role.
+        /// </summary>
+        /// <param name="bookDto">Book data for creation.</param>
+        /// <returns>The created book details.</returns>
         [Authorize("AdminPolicy")]
         [HttpPost]
         public async Task<ActionResult<BookDetailsDto>> Create([FromBody] CreateBookDto bookDto)
@@ -54,6 +80,12 @@ namespace Library.WebApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdBook.Id }, createdBook);
         }
 
+        /// <summary>
+        /// Update an existing book.
+        /// Requires Admin role.
+        /// </summary>
+        /// <param name="bookDto">Updated book data.</param>
+        /// <returns>The updated book details.</returns>
         [Authorize("AdminPolicy")]
         [HttpPut]
         public async Task<ActionResult<BookDetailsDto>> Update([FromBody] UpdateBookDto bookDto)
@@ -62,6 +94,12 @@ namespace Library.WebApi.Controllers
             return Ok(updatedBook);
         }
 
+        /// <summary>
+        /// Delete a book by its ID.
+        /// Requires Admin role.
+        /// </summary>
+        /// <param name="id">Book's ID.</param>
+        /// <returns>No content response.</returns>
         [Authorize("AdminPolicy")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)

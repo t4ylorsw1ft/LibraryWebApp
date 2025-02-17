@@ -17,6 +17,11 @@ namespace Library.WebApi.Controllers
             _bookBorrowService = bookBorrowService;
         }
 
+        /// <summary>
+        /// Borrow a book by its ID.
+        /// </summary>
+        /// <param name="bookId">ID of the book to borrow.</param>
+        /// <returns>OK response when the book is borrowed successfully.</returns>
         [HttpPost("borrow")]
         public async Task<IActionResult> BorrowBook(Guid bookId)
         {
@@ -25,6 +30,11 @@ namespace Library.WebApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Return a borrowed book.
+        /// </summary>
+        /// <param name="bookBorrowId">ID of the book borrow record.</param>
+        /// <returns>OK response when the book is returned successfully.</returns>
         [HttpPost("return/{bookBorrowId}")]
         public async Task<IActionResult> ReturnBook(Guid bookBorrowId)
         {
@@ -32,6 +42,10 @@ namespace Library.WebApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get all books borrowed by the current user.
+        /// </summary>
+        /// <returns>A list of books borrowed by the current user.</returns>
         [HttpGet("user")]
         public async Task<ActionResult<List<BookBorrowLookupDto>>> GetAllByUser()
         {

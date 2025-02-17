@@ -16,22 +16,31 @@ namespace Library.WebApi.Controllers
             _fileService = fileService;
         }
 
+        /// <summary>
+        /// Upload a file to the server.
+        /// </summary>
+        /// <param name="file">The file to upload.</param>
+        /// <returns>File path of the uploaded file.</returns>
         [HttpPost("upload")]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {
             Console.WriteLine("Controller");
             if (file == null || file.Length == 0)
-                return BadRequest("Файл не загружен");
+                return BadRequest("File not uploaded.");
 
             using var stream = new MemoryStream();
             await file.CopyToAsync(stream);
             var fileData = stream.ToArray();
 
-
             var filePath = await _fileService.UploadImageAsync(fileData, file.FileName);
             return Ok(new { filePath });
         }
 
+        /// <summary>
+        /// Download a file from the server.
+        /// </summary>
+        /// <param name="filePath">The path of the file to download.</param>
+        /// <returns>The file content for download.</returns>
         [HttpGet("download")]
         public async Task<IActionResult> GetFile([FromQuery] string filePath)
         {
@@ -39,6 +48,11 @@ namespace Library.WebApi.Controllers
             return File(fileData, "application/octet-stream", Path.GetFileName(filePath));
         }
 
+        /// <summary>
+        /// Delete a file from the server.
+        /// </summary>
+        /// <param name="filePath">The path of the file to delete.</param>
+        /// <returns>OK response when the file is deleted.</returns>
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteFile([FromQuery] string filePath)
         {

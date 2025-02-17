@@ -18,6 +18,12 @@ namespace Library.WebApi.Controllers
             _authorService = authorService;
         }
 
+        /// <summary>
+        /// Get a paginated list of authors.
+        /// </summary>
+        /// <param name="page">Page number.</param>
+        /// <param name="size">Number of authors per page.</param>
+        /// <returns>A list of authors.</returns>
         [HttpGet]
         public async Task<ActionResult<List<AuthorLookupDto>>> GetAllPaged([FromQuery] int page, [FromQuery] int size)
         {
@@ -25,6 +31,11 @@ namespace Library.WebApi.Controllers
             return Ok(authors);
         }
 
+        /// <summary>
+        /// Get an author by their ID.
+        /// </summary>
+        /// <param name="id">Author's ID.</param>
+        /// <returns>Details of the author.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetById(Guid id)
         {
@@ -32,6 +43,12 @@ namespace Library.WebApi.Controllers
             return Ok(author);
         }
 
+        /// <summary>
+        /// Create a new author.
+        /// Requires Admin role.
+        /// </summary>
+        /// <param name="authorDto">Author data for creation.</param>
+        /// <returns>The created author details.</returns>
         [Authorize("AdminPolicy")]
         [HttpPost]
         public async Task<ActionResult<Author>> Create([FromBody] CreateAuthorDto authorDto)
@@ -40,6 +57,12 @@ namespace Library.WebApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdAuthor.Id }, createdAuthor);
         }
 
+        /// <summary>
+        /// Update an existing author.
+        /// Requires Admin role.
+        /// </summary>
+        /// <param name="authorDto">Updated author data.</param>
+        /// <returns>The updated author details.</returns>
         [Authorize("AdminPolicy")]
         [HttpPut]
         public async Task<ActionResult<Author>> Update([FromBody] UpdateAuthorDto authorDto)
@@ -48,6 +71,12 @@ namespace Library.WebApi.Controllers
             return Ok(updatedAuthor);
         }
 
+        /// <summary>
+        /// Delete an author by their ID.
+        /// Requires Admin role.
+        /// </summary>
+        /// <param name="id">Author's ID.</param>
+        /// <returns>No content response.</returns>
         [Authorize("AdminPolicy")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
@@ -57,4 +86,3 @@ namespace Library.WebApi.Controllers
         }
     }
 }
-

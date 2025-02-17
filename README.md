@@ -17,7 +17,7 @@
 Для клонирования проекта на локальную машину используйте:
 
 ```bash
-git clone https://github.com/t4ylorsw1ft/EventsBackend.git
+git clone https://github.com/t4ylorsw1ft/LibraryWebApp.git
 cd EventsBackend
 ```
 ### Запуск проекта
@@ -26,13 +26,17 @@ Swagger UI доступен по адресу: https://localhost:57895/swagger/i
 
 ### Авторизация в API
 Для авторизации необходимо получить access-токен с помощью одного из методов api/User/.
-Токен должен передаваться в заголовке запроса в формате #Authorization: Bearer your-token-here#
+Токен должен передаваться в заголовке запроса в формате Authorization: Bearer your-token-here
+
+По умолчанию автоматически создается пользователь, обладающий правами администратора.
+Его email: admin@mail.ru
+Его пароль: 5000Dfyz
 
 ### Просмотр документации
 Документация API доступна через Swagger. Страница со Swagger открывается при запуске проекта.
 
 ### Unit-тестирование
-Unit-тесты находятся в проекте Events.Tests
+Unit-тесты находятся в проекте Library.Tests
 
 
 

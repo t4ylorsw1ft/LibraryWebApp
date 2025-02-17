@@ -9,11 +9,11 @@ using System.Text;
 
 namespace Library.Infrastructure.Security
 {
-    public class JWTProvider : IJWTProvider
+    public class JWTProvider : IJwtProvider
     {
-        private readonly JWTOptions _options;
+        private readonly JwtOptions _options;
 
-        public JWTProvider(IOptions<JWTOptions> options)
+        public JWTProvider(IOptions<JwtOptions> options)
         {
             _options = options.Value;
         }

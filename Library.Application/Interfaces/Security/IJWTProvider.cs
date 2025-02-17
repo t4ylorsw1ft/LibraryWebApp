@@ -2,7 +2,7 @@
 
 namespace Library.Application.Interfaces.Security
 {
-    public interface IJWTProvider
+    public interface IJwtProvider
     {
         string GenerateAccessToken(User user);
         string GenerateRefreshToken();

@@ -1,4 +1,6 @@
-﻿using Library.Application.Common.Exceptions;
+﻿using AutoMapper;
+using Library.Application.Common.Exceptions;
+using Library.Application.DTOs.BookBorrows;
 using Library.Application.Interfaces.Repositories;
 using Library.Application.Interfaces.Services;
 using Library.Domain.Entities;
@@ -10,12 +12,17 @@ namespace Library.Application.Services
         private readonly IBookRepository _bookRepository;
         private readonly IUserRepository _userRepository;
         private readonly IBookBorrowRepository _bookBorrowRepository;
+        private readonly IMapper _mapper;
 
-        public BookBorrowService(IBookRepository bookRepository, IUserRepository userRepository, IBookBorrowRepository bookBorrowRepository)
+        public BookBorrowService(IBookRepository bookRepository, 
+            IUserRepository userRepository, 
+            IBookBorrowRepository bookBorrowRepository, 
+            IMapper mapper)
         {
             _bookRepository = bookRepository;
             _userRepository = userRepository;
             _bookBorrowRepository = bookBorrowRepository;
+            _mapper = mapper;
         }
 
         public async Task BorrowBookAsync(Guid userId, Guid bookId)
@@ -67,9 +74,10 @@ namespace Library.Application.Services
 
         }
 
-        public async Task<IEnumerable<BookBorrow>> GetAllByUserAsync(Guid userId)
+        public async Task<List<BookBorrowLookupDto>> GetAllByUserAsync(Guid userId)
         {
-            return await _bookBorrowRepository.GetAllByUserAsync(userId);
+            var bookBorrows = await _bookBorrowRepository.GetAllByUserAsync(userId);
+            return _mapper.Map<List<BookBorrowLookupDto>>(bookBorrows);
         }
     }
 }

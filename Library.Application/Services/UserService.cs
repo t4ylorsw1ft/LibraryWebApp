@@ -1,5 +1,7 @@
-﻿using Library.Application.Common.Exceptions;
-using Library.Application.DTOs;
+﻿using AutoMapper;
+using FluentValidation;
+using Library.Application.Common.Exceptions;
+using Library.Application.DTOs.Users;
 using Library.Application.Interfaces.Repositories;
 using Library.Application.Interfaces.Security;
 using Library.Application.Interfaces.Services;
@@ -11,18 +13,40 @@ namespace Library.Application.Services
     {
         private readonly IPasswordHasher _passwordHasher;
         private readonly IUserRepository _userRepository;
-        private readonly IJWTProvider _jwtProvider;
+        private readonly IJwtProvider _jwtProvider;
+        private readonly IMapper _mapper;
 
-        public UserService(IPasswordHasher passwordHasher, IUserRepository userRepository, IJWTProvider jwtProvider)
+        private readonly IValidator<RegisterDto> _registerDtoValidator;
+        private readonly IValidator<LoginDto> _loginDtoValidator;
+
+        public UserService(
+            IPasswordHasher passwordHasher,
+            IUserRepository userRepository,
+            IJwtProvider jwtProvider,
+            IMapper mapper,
+            IValidator<RegisterDto> registerDtoValidator,
+            IValidator<LoginDto> loginDtoValidator)
         {
             _passwordHasher = passwordHasher;
             _userRepository = userRepository;
             _jwtProvider = jwtProvider;
+            _mapper = mapper;
+            _registerDtoValidator = registerDtoValidator;
+            _loginDtoValidator = loginDtoValidator;
         }
 
-        public async Task<User> RegisterAsync(string username, string email, string password)
+        public async Task<JwtPairDto> RegisterAsync(RegisterDto registerDto)
         {
-            string passwordHash = _passwordHasher.Generate(password);
+            var validationResult = await _registerDtoValidator.ValidateAsync(registerDto);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
+            string username = registerDto.Username;
+            string email = registerDto.Email;
+            string passwordHash = _passwordHasher.Generate(registerDto.Password);
+
+            if (await _userRepository.GetByEmail(email) != null)
+                throw new AlreadyExistsException("email");
 
             User user = new User()
             {
@@ -31,14 +55,32 @@ namespace Library.Application.Services
                 PasswordHash = passwordHash
             };
 
-            return await _userRepository.AddAsync(user);
+            var newUser = await _userRepository.AddAsync(user);
+
+            string accessToken = _jwtProvider.GenerateAccessToken(newUser);
+            string refreshToken = _jwtProvider.GenerateRefreshToken();
+
+            newUser.RefreshToken = refreshToken;
+            await _userRepository.UpdateAsync(user);
+
+            JwtPairDto jwtPair = new JwtPairDto()
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            };
+
+            return jwtPair;
         }
 
-        public async Task<JwtPairDto> LoginAsync(string email, string password)
+        public async Task<JwtPairDto> LoginAsync(LoginDto loginDto)
         {
-            User? user = await _userRepository.GetByEmail(email);
+            var validationResult = await _loginDtoValidator.ValidateAsync(loginDto);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
 
-            if (user == null || !_passwordHasher.Verify(password, user.PasswordHash))
+            User? user = await _userRepository.GetByEmail(loginDto.Email);
+
+            if (user == null || !_passwordHasher.Verify(loginDto.Password, user.PasswordHash))
                 throw new LoginException();
 
             string accessToken = _jwtProvider.GenerateAccessToken(user);
@@ -56,8 +98,10 @@ namespace Library.Application.Services
             return jwtPair;
         }
 
-        public async Task<JwtPairDto> RefreshAsync(string refreshToken)
+        public async Task<JwtPairDto> RefreshAsync(RefreshDto refreshDto)
         {
+            string refreshToken = refreshDto.RefreshToken;
+
             User? user = await _userRepository.GetByRefreshToken(refreshToken);
 
             if (user == null)

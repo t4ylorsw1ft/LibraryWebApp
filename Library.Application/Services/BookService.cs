@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Library.Application.Common.Exceptions;
 using Library.Application.DTOs.Books;
 using Library.Application.Interfaces.Repositories;
@@ -12,12 +13,25 @@ namespace Library.Application.Services
         private readonly IBookRepository _bookRepository;
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
+        private readonly IFileStorageService _fileStorageService;
 
-        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, IMapper mapper)
+        private readonly IValidator<CreateBookDto> _createBookDtoValidator;
+        private readonly IValidator<UpdateBookDto> _updateBookDtoValidator;
+
+        public BookService(
+            IBookRepository bookRepository,
+            IAuthorRepository authorRepository,
+            IMapper mapper,
+            IFileStorageService fileStorageService,
+            IValidator<CreateBookDto> createBookDtoValidator,
+            IValidator<UpdateBookDto> updateBookDtoValidator)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _fileStorageService = fileStorageService;
+            _createBookDtoValidator = createBookDtoValidator;
+            _updateBookDtoValidator = updateBookDtoValidator;
         }
 
         public async Task<List<BookLookupDto>> GetAllPagedAsync(int page, int size)
@@ -60,6 +74,10 @@ namespace Library.Application.Services
 
         public async Task<BookDetailsDto> CreateAsync(CreateBookDto bookDto)
         {
+            var validationResult = await _createBookDtoValidator.ValidateAsync(bookDto);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
             if (!await _authorRepository.ExistsAsync(bookDto.AuthorId))
                 throw new NotFoundException(typeof(Author), bookDto.AuthorId);
 
@@ -81,10 +99,20 @@ namespace Library.Application.Services
 
         public async Task<BookDetailsDto> UpdateAsync(UpdateBookDto bookDto)
         {
+            var validationResult = await _updateBookDtoValidator.ValidateAsync(bookDto);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
             var existingBook = await _bookRepository.GetByIdAsync(bookDto.Id);
 
             if (existingBook == null)
                 throw new NotFoundException(typeof(Book), bookDto.Id);
+
+            if (await _bookRepository.GetByISBNAsync(bookDto.ISBN) != null)
+                throw new AlreadyExistsException("ISBN");
+
+            if (existingBook.ImagePath != bookDto.ImagePath && existingBook.ImagePath != null)
+                await _fileStorageService.DeleteFileAsync(existingBook.ImagePath);
 
             _mapper.Map(bookDto, existingBook);
 
@@ -95,6 +123,11 @@ namespace Library.Application.Services
 
         public async Task DeleteAsync(Guid id)
         {
+            var book = await _bookRepository.GetByIdAsync(id);
+
+            if (book.ImagePath != null)
+                await _fileStorageService.DeleteFileAsync(book.ImagePath);
+
             if (!await _bookRepository.DeleteAsync(id))
                 throw new NotFoundException(typeof(Book), id);
         }

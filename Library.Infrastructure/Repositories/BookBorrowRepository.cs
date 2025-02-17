@@ -18,12 +18,15 @@ namespace Library.Infrastructure.Repositories
             return await _context.BookBorrows
                 .Where(bb => bb.UserId == userId)
                 .Include(bb => bb.Book)
+                .ThenInclude(bb => bb.Author)
                 .ToListAsync();
         }
 
         public async Task<BookBorrow?> GetByIdAsync(Guid id)
         {
-            return await _context.BookBorrows.FirstOrDefaultAsync(bb => bb.Id == id);
+            return await _context.BookBorrows
+                .Include(bb => bb.Book)
+                .FirstOrDefaultAsync(bb => bb.Id == id);
         }
 
         public async Task<BookBorrow> AddAsync(BookBorrow bookBorrow)

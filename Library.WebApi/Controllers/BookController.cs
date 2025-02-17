@@ -1,11 +1,14 @@
 ﻿using Library.Application.DTOs.Books;
 using Library.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.WebApi.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
@@ -15,9 +18,6 @@ namespace Library.WebApi.Controllers
             _bookService = bookService;
         }
 
-        /// <summary>
-        /// Получить список книг с пагинацией.
-        /// </summary>
         [HttpGet]
         public async Task<ActionResult<List<BookLookupDto>>> GetAllPaged([FromQuery] int page, [FromQuery] int size)
         {
@@ -25,9 +25,6 @@ namespace Library.WebApi.Controllers
             return Ok(books);
         }
 
-        /// <summary>
-        /// Получить книги по автору.
-        /// </summary>
         [HttpGet("author/{authorId}")]
         public async Task<ActionResult<List<BookLookupDto>>> GetAllByAuthor(Guid authorId)
         {
@@ -35,9 +32,6 @@ namespace Library.WebApi.Controllers
             return Ok(books);
         }
 
-        /// <summary>
-        /// Получить книгу по идентификатору.
-        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<BookDetailsDto>> GetById(Guid id)
         {
@@ -45,9 +39,6 @@ namespace Library.WebApi.Controllers
             return Ok(book);
         }
 
-        /// <summary>
-        /// Получить книгу по ISBN.
-        /// </summary>
         [HttpGet("isbn/{isbn}")]
         public async Task<ActionResult<BookDetailsDto>> GetByISBN(string isbn)
         {
@@ -55,9 +46,7 @@ namespace Library.WebApi.Controllers
             return Ok(book);
         }
 
-        /// <summary>
-        /// Создать новую книгу.
-        /// </summary>
+        [Authorize("AdminPolicy")]
         [HttpPost]
         public async Task<ActionResult<BookDetailsDto>> Create([FromBody] CreateBookDto bookDto)
         {
@@ -65,9 +54,7 @@ namespace Library.WebApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdBook.Id }, createdBook);
         }
 
-        /// <summary>
-        /// Обновить данные книги.
-        /// </summary>
+        [Authorize("AdminPolicy")]
         [HttpPut]
         public async Task<ActionResult<BookDetailsDto>> Update([FromBody] UpdateBookDto bookDto)
         {
@@ -75,9 +62,7 @@ namespace Library.WebApi.Controllers
             return Ok(updatedBook);
         }
 
-        /// <summary>
-        /// Удалить книгу.
-        /// </summary>
+        [Authorize("AdminPolicy")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

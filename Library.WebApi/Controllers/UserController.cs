@@ -1,5 +1,9 @@
 ﻿using Library.Application.DTOs.Users;
 using Library.Application.Interfaces.Services;
+using Library.Application.UseCases.Users.Commands.Login;
+using Library.Application.UseCases.Users.Commands.Refresh;
+using Library.Application.UseCases.Users.Commands.Register;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.WebApi.Controllers
@@ -8,11 +12,11 @@ namespace Library.WebApi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
-        public UserController(IUserService userService)
+        public UserController(IMediator mediator)
         {
-            _userService = userService;
+            _mediator = mediator;
         }
 
         /// <summary>
@@ -21,9 +25,9 @@ namespace Library.WebApi.Controllers
         /// <param name="registerDto">User registration data.</param>
         /// <returns>A JWT pair (access and refresh tokens) upon successful registration.</returns>
         [HttpPost("register")]
-        public async Task<ActionResult<JwtPairDto>> Register([FromBody] RegisterDto registerDto)
+        public async Task<ActionResult<JwtPairDto>> Register([FromBody] RegisterDto registerDto, CancellationToken cancellationToken)
         {
-            var jwtPair = await _userService.RegisterAsync(registerDto);
+            var jwtPair = await _mediator.Send(new RegisterCommand(registerDto), cancellationToken);
             return Ok(jwtPair);
         }
 
@@ -33,9 +37,9 @@ namespace Library.WebApi.Controllers
         /// <param name="loginDto">User login data.</param>
         /// <returns>A JWT pair (access and refresh tokens) upon successful login.</returns>
         [HttpPost("login")]
-        public async Task<ActionResult<JwtPairDto>> Login([FromBody] LoginDto loginDto)
+        public async Task<ActionResult<JwtPairDto>> Login([FromBody] LoginDto loginDto, CancellationToken cancellationToken)
         {
-            var jwtPair = await _userService.LoginAsync(loginDto);
+            var jwtPair = await _mediator.Send(new LoginCommand(loginDto), cancellationToken);
             return Ok(jwtPair);
         }
 
@@ -45,9 +49,9 @@ namespace Library.WebApi.Controllers
         /// <param name="refreshTokenDto">Data containing the refresh token.</param>
         /// <returns>A new JWT pair (access and refresh tokens) upon successful refresh.</returns>
         [HttpPost("refresh")]
-        public async Task<ActionResult<JwtPairDto>> Refresh([FromBody] RefreshDto refreshTokenDto)
+        public async Task<ActionResult<JwtPairDto>> Refresh([FromBody] RefreshDto refreshTokenDto, CancellationToken cancellationToken)
         {
-            var jwtPair = await _userService.RefreshAsync(refreshTokenDto);
+            var jwtPair = await _mediator.Send(new RefreshCommand(refreshTokenDto), cancellationToken);
             return Ok(jwtPair);
         }
     }

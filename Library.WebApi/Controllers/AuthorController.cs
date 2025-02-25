@@ -1,6 +1,10 @@
 ﻿using Library.Application.DTOs.Authors;
-using Library.Application.Interfaces.Services;
-using Library.Domain.Entities;
+using Library.Application.UseCases.Authors.Commands.CreateAuthor;
+using Library.Application.UseCases.Authors.Commands.DeleteAuthor;
+using Library.Application.UseCases.Authors.Commands.UpdateAuthor;
+using Library.Application.UseCases.Authors.Queries.GetAllAuthorsPaged;
+using Library.Application.UseCases.Authors.Queries.GetAuthorById;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +15,11 @@ namespace Library.WebApi.Controllers
     [Authorize]
     public class AuthorController : ControllerBase
     {
-        private readonly IAuthorService _authorService;
+        private readonly IMediator _mediator;
 
-        public AuthorController(IAuthorService authorService)
+        public AuthorController(IMediator mediator)
         {
-            _authorService = authorService;
+            _mediator = mediator;
         }
 
         /// <summary>
@@ -25,9 +29,12 @@ namespace Library.WebApi.Controllers
         /// <param name="size">Number of authors per page.</param>
         /// <returns>A list of authors.</returns>
         [HttpGet]
-        public async Task<ActionResult<List<AuthorLookupDto>>> GetAllPaged([FromQuery] int page, [FromQuery] int size)
+        public async Task<ActionResult<List<AuthorLookupDto>>> GetAllPaged(
+            [FromQuery] int page,
+            [FromQuery] int size,
+            CancellationToken cancellationToken)
         {
-            var authors = await _authorService.GetAllPagedAsync(page, size);
+            var authors = await _mediator.Send(new GetAllAuthorsPagedQuery(page, size), cancellationToken);
             return Ok(authors);
         }
 
@@ -37,9 +44,9 @@ namespace Library.WebApi.Controllers
         /// <param name="id">Author's ID.</param>
         /// <returns>Details of the author.</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetById(Guid id)
+        public async Task<ActionResult<AuthorDetailsDto>> GetById(Guid id, CancellationToken cancellationToken)
         {
-            var author = await _authorService.GetByIdAsync(id);
+            var author = await _mediator.Send(new GetAuthorByIdQuery(id), cancellationToken);
             return Ok(author);
         }
 
@@ -51,9 +58,11 @@ namespace Library.WebApi.Controllers
         /// <returns>The created author details.</returns>
         [Authorize("AdminPolicy")]
         [HttpPost]
-        public async Task<ActionResult<Author>> Create([FromBody] CreateAuthorDto authorDto)
+        public async Task<ActionResult<AuthorDetailsDto>> Create(
+            [FromBody] CreateAuthorDto authorDto,
+            CancellationToken cancellationToken)
         {
-            var createdAuthor = await _authorService.CreateAsync(authorDto);
+            var createdAuthor = await _mediator.Send(new CreateAuthorCommand(authorDto), cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = createdAuthor.Id }, createdAuthor);
         }
 
@@ -65,9 +74,11 @@ namespace Library.WebApi.Controllers
         /// <returns>The updated author details.</returns>
         [Authorize("AdminPolicy")]
         [HttpPut]
-        public async Task<ActionResult<Author>> Update([FromBody] UpdateAuthorDto authorDto)
+        public async Task<ActionResult<AuthorDetailsDto>> Update(
+            [FromBody] UpdateAuthorDto authorDto,
+            CancellationToken cancellationToken)
         {
-            var updatedAuthor = await _authorService.UpdateAsync(authorDto);
+            var updatedAuthor = await _mediator.Send(new UpdateAuthorCommand(authorDto), cancellationToken);
             return Ok(updatedAuthor);
         }
 
@@ -79,9 +90,9 @@ namespace Library.WebApi.Controllers
         /// <returns>No content response.</returns>
         [Authorize("AdminPolicy")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            await _authorService.DeleteAsync(id);
+            await _mediator.Send(new DeleteAuthorCommand(id), cancellationToken);
             return NoContent();
         }
     }

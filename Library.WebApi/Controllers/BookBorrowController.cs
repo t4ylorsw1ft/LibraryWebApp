@@ -1,7 +1,12 @@
 ﻿using Library.Application.DTOs.BookBorrows;
 using Library.Application.Interfaces.Services;
+using Library.Application.UseCases.BookBorrows.Commands.BorrowBook;
+using Library.Application.UseCases.BookBorrows.Commands.ReturnBook;
+using Library.Application.UseCases.BookBorrows.Queries.GetUserBookBorrows;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 
 namespace Library.WebApi.Controllers
 {
@@ -10,11 +15,11 @@ namespace Library.WebApi.Controllers
     [Authorize]
     public class BookBorrowController : ControllerBase
     {
-        private readonly IBookBorrowService _bookBorrowService;
+        private readonly IMediator _mediator;
 
-        public BookBorrowController(IBookBorrowService bookBorrowService)
+        public BookBorrowController(IMediator mediator)
         {
-            _bookBorrowService = bookBorrowService;
+            _mediator = mediator;
         }
 
         /// <summary>
@@ -23,10 +28,10 @@ namespace Library.WebApi.Controllers
         /// <param name="bookId">ID of the book to borrow.</param>
         /// <returns>OK response when the book is borrowed successfully.</returns>
         [HttpPost("borrow")]
-        public async Task<IActionResult> BorrowBook(Guid bookId)
+        public async Task<IActionResult> BorrowBook(Guid bookId, CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(User.FindFirst("userId")?.Value);
-            await _bookBorrowService.BorrowBookAsync(userId, bookId);
+            await _mediator.Send(new BorrowBookCommand(userId, bookId), cancellationToken);
             return Ok();
         }
 
@@ -36,9 +41,9 @@ namespace Library.WebApi.Controllers
         /// <param name="bookBorrowId">ID of the book borrow record.</param>
         /// <returns>OK response when the book is returned successfully.</returns>
         [HttpPost("return/{bookBorrowId}")]
-        public async Task<IActionResult> ReturnBook(Guid bookBorrowId)
+        public async Task<IActionResult> ReturnBook(Guid bookBorrowId, CancellationToken cancellationToken)
         {
-            await _bookBorrowService.ReturnBookAsync(bookBorrowId);
+            await _mediator.Send(new ReturnBookCommand(bookBorrowId), cancellationToken);
             return Ok();
         }
 
@@ -47,10 +52,10 @@ namespace Library.WebApi.Controllers
         /// </summary>
         /// <returns>A list of books borrowed by the current user.</returns>
         [HttpGet("user")]
-        public async Task<ActionResult<List<BookBorrowLookupDto>>> GetAllByUser()
+        public async Task<ActionResult<List<BookBorrowLookupDto>>> GetAllByUser(CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(User.FindFirst("userId")?.Value);
-            var bookBorrows = await _bookBorrowService.GetAllByUserAsync(userId);
+            var bookBorrows = await _mediator.Send(new GetUserBookBorrowsQuery(userId), cancellationToken);
             return Ok(bookBorrows);
         }
     }

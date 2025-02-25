@@ -1,5 +1,12 @@
 ﻿using Library.Application.DTOs.Books;
-using Library.Application.Interfaces.Services;
+using Library.Application.UseCases.Books.Commands.CreateBook;
+using Library.Application.UseCases.Books.Commands.DeleteBook;
+using Library.Application.UseCases.Books.Commands.UpdateBook;
+using Library.Application.UseCases.Books.Queries.GetAllBooksByAuthor;
+using Library.Application.UseCases.Books.Queries.GetAllBooksPaged;
+using Library.Application.UseCases.Books.Queries.GetBookById;
+using Library.Application.UseCases.Books.Queries.GetBookByISBN;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +17,11 @@ namespace Library.WebApi.Controllers
     [Authorize]
     public class BookController : ControllerBase
     {
-        private readonly IBookService _bookService;
+        private readonly IMediator _mediator;
 
-        public BookController(IBookService bookService)
+        public BookController(IMediator mediator)
         {
-            _bookService = bookService;
+            _mediator = mediator;
         }
 
         /// <summary>
@@ -24,9 +31,9 @@ namespace Library.WebApi.Controllers
         /// <param name="size">Number of books per page.</param>
         /// <returns>A list of books.</returns>
         [HttpGet]
-        public async Task<ActionResult<List<BookLookupDto>>> GetAllPaged([FromQuery] int page, [FromQuery] int size)
+        public async Task<ActionResult<List<BookLookupDto>>> GetAllPaged([FromQuery] int page, [FromQuery] int size, CancellationToken cancellationToken)
         {
-            var books = await _bookService.GetAllPagedAsync(page, size);
+            var books = await _mediator.Send(new GetAllBooksPagedQuery(page, size), cancellationToken);
             return Ok(books);
         }
 
@@ -36,9 +43,9 @@ namespace Library.WebApi.Controllers
         /// <param name="authorId">Author's ID.</param>
         /// <returns>A list of books by the author.</returns>
         [HttpGet("author/{authorId}")]
-        public async Task<ActionResult<List<BookLookupDto>>> GetAllByAuthor(Guid authorId)
+        public async Task<ActionResult<List<BookLookupDto>>> GetAllByAuthor(Guid authorId, CancellationToken cancellationToken)
         {
-            var books = await _bookService.GetAllByAuthor(authorId);
+            var books = await _mediator.Send(new GetAllBooksByAuthorQuery(authorId), cancellationToken);
             return Ok(books);
         }
 
@@ -48,9 +55,9 @@ namespace Library.WebApi.Controllers
         /// <param name="id">Book's ID.</param>
         /// <returns>Details of the book.</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookDetailsDto>> GetById(Guid id)
+        public async Task<ActionResult<BookDetailsDto>> GetById(Guid id, CancellationToken cancellationToken)
         {
-            var book = await _bookService.GetByIdAsync(id);
+            var book = await _mediator.Send(new GetBookByIdQuery(id), cancellationToken);
             return Ok(book);
         }
 
@@ -60,9 +67,9 @@ namespace Library.WebApi.Controllers
         /// <param name="isbn">Book's ISBN.</param>
         /// <returns>Details of the book.</returns>
         [HttpGet("isbn/{isbn}")]
-        public async Task<ActionResult<BookDetailsDto>> GetByISBN(string isbn)
+        public async Task<ActionResult<BookDetailsDto>> GetByISBN(string isbn, CancellationToken cancellationToken)
         {
-            var book = await _bookService.GetByISBNAsync(isbn);
+            var book = await _mediator.Send(new GetBookByISBNQuery(isbn), cancellationToken);
             return Ok(book);
         }
 
@@ -74,9 +81,9 @@ namespace Library.WebApi.Controllers
         /// <returns>The created book details.</returns>
         [Authorize("AdminPolicy")]
         [HttpPost]
-        public async Task<ActionResult<BookDetailsDto>> Create([FromBody] CreateBookDto bookDto)
+        public async Task<ActionResult<BookDetailsDto>> Create([FromBody] CreateBookDto bookDto, CancellationToken cancellationToken)
         {
-            var createdBook = await _bookService.CreateAsync(bookDto);
+            var createdBook = await _mediator.Send(new CreateBookCommand(bookDto), cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = createdBook.Id }, createdBook);
         }
 
@@ -88,9 +95,9 @@ namespace Library.WebApi.Controllers
         /// <returns>The updated book details.</returns>
         [Authorize("AdminPolicy")]
         [HttpPut]
-        public async Task<ActionResult<BookDetailsDto>> Update([FromBody] UpdateBookDto bookDto)
+        public async Task<ActionResult<BookDetailsDto>> Update([FromBody] UpdateBookDto bookDto, CancellationToken cancellationToken)
         {
-            var updatedBook = await _bookService.UpdateAsync(bookDto);
+            var updatedBook = await _mediator.Send(new UpdateBookCommand(bookDto), cancellationToken);
             return Ok(updatedBook);
         }
 
@@ -102,9 +109,9 @@ namespace Library.WebApi.Controllers
         /// <returns>No content response.</returns>
         [Authorize("AdminPolicy")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            await _bookService.DeleteAsync(id);
+            await _mediator.Send(new DeleteBookCommand(id), cancellationToken);
             return NoContent();
         }
     }

@@ -1,6 +1,11 @@
 ﻿using Library.Application.Interfaces.Services;
+using Library.Application.UseCases.Files.Commands.DeleteImage;
+using Library.Application.UseCases.Files.Commands.UploadImage;
+using Library.Application.UseCases.Files.Queries.GetImage;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 
 namespace Library.WebApi.Controllers
 {
@@ -9,11 +14,11 @@ namespace Library.WebApi.Controllers
     [Authorize]
     public class FileController : ControllerBase
     {
-        private readonly IFileService _fileService;
+        private readonly IMediator _mediator;
 
-        public FileController(IFileService fileService)
+        public FileController(IMediator mediator)
         {
-            _fileService = fileService;
+            _mediator = mediator;
         }
 
         /// <summary>
@@ -22,17 +27,16 @@ namespace Library.WebApi.Controllers
         /// <param name="file">The file to upload.</param>
         /// <returns>File path of the uploaded file.</returns>
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadFile(IFormFile file, CancellationToken cancellationToken)
         {
-            Console.WriteLine("Controller");
             if (file == null || file.Length == 0)
                 return BadRequest("File not uploaded.");
 
             using var stream = new MemoryStream();
-            await file.CopyToAsync(stream);
+            await file.CopyToAsync(stream, cancellationToken);
             var fileData = stream.ToArray();
 
-            var filePath = await _fileService.UploadImageAsync(fileData, file.FileName);
+            var filePath = await _mediator.Send(new UploadImageCommand(fileData, file.FileName), cancellationToken);
             return Ok(new { filePath });
         }
 
@@ -42,9 +46,9 @@ namespace Library.WebApi.Controllers
         /// <param name="filePath">The path of the file to download.</param>
         /// <returns>The file content for download.</returns>
         [HttpGet("download")]
-        public async Task<IActionResult> GetFile([FromQuery] string filePath)
+        public async Task<IActionResult> GetFile([FromQuery] string filePath, CancellationToken cancellationToken)
         {
-            var fileData = await _fileService.GetImageAsync(filePath);
+            var fileData = await _mediator.Send(new GetImageQuery(filePath), cancellationToken);
             return File(fileData, "application/octet-stream", Path.GetFileName(filePath));
         }
 
@@ -54,9 +58,9 @@ namespace Library.WebApi.Controllers
         /// <param name="filePath">The path of the file to delete.</param>
         /// <returns>OK response when the file is deleted.</returns>
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteFile([FromQuery] string filePath)
+        public async Task<IActionResult> DeleteFile([FromQuery] string filePath, CancellationToken cancellationToken)
         {
-            await _fileService.DeleteImageAsync(filePath);
+            await _mediator.Send(new DeleteImageCommand(filePath), cancellationToken);
             return Ok();
         }
     }

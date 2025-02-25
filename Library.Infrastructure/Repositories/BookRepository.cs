@@ -13,70 +13,66 @@ namespace Library.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Book>> GetAllPagedAsync(int page, int size)
+        public async Task<IEnumerable<Book>> GetAllPagedAsync(int page, int size, CancellationToken cancellationToken)
         {
             return await _context.Books.Include(b => b.Author)
                 .OrderBy(b => b.Title)
                 .Skip((page - 1) * size)
                 .Take(size)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Book>> GetAllByAuthorAsync(Guid authorId)
+        public async Task<IEnumerable<Book>> GetAllByAuthorAsync(Guid authorId, CancellationToken cancellationToken)
         {
             return await _context.Books.Where(b => b.AuthorId == authorId)
                 .Include(b => b.Author)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Book>> GetAllByUserAsync(Guid userId)
+        public async Task<IEnumerable<Book>> GetAllByUserAsync(Guid userId, CancellationToken cancellationToken)
         {
             return await _context.BookBorrows
                 .Where(bb => bb.UserId == userId)
                 .Select(bb => bb.Book)
                 .Include(b => b.Author)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Book?> GetByIdAsync(Guid id)
+        public async Task<Book?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Books.Include(b => b.Author)
-                .FirstOrDefaultAsync(b => b.Id == id);
+                .FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
         }
 
-        public async Task<Book?> GetByISBNAsync(string isbn)
+        public async Task<Book?> GetByISBNAsync(string isbn, CancellationToken cancellationToken)
         {
             return await _context.Books.Include(b => b.Author)
-                .FirstOrDefaultAsync(b => b.ISBN == isbn);
+                .FirstOrDefaultAsync(b => b.ISBN == isbn, cancellationToken);
         }
 
-        public async Task<Book> AddAsync(Book book)
+        public async Task<Book> AddAsync(Book book, CancellationToken cancellationToken)
         {
             await _context.Books.AddAsync(book);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return book;
         }
 
-        public async Task<Book> UpdateAsync(Book book)
+        public async Task<Book> UpdateAsync(Book book, CancellationToken cancellationToken)
         {
             _context.Books.Update(book);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return book;
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task DeleteAsync(Book book, CancellationToken cancellationToken)
         {
-            var book = await _context.Books.FindAsync(id);
-            if (book == null) return false;
-
             _context.Books.Remove(book);
-            await _context.SaveChangesAsync();
-            return true;
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+        public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await _context.Books.AnyAsync(b => b.Id == id);
+            return await _context.Books.AnyAsync(b => b.Id == id, cancellationToken);
         }
     }
 }

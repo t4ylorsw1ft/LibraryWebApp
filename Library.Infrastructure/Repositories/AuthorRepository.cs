@@ -1,6 +1,7 @@
 ﻿using Library.Application.Interfaces.Repositories;
 using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace Library.Infrastructure.Repositories
 {
@@ -13,48 +14,44 @@ namespace Library.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Author?> GetByIdAsync(Guid id)
+        public async Task<Author?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Authors.Include(a => a.Books)
-                .FirstOrDefaultAsync(a => a.Id == id);
+                .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Author>> GetAllPagedAsync(int page, int size)
+        public async Task<IEnumerable<Author>> GetAllPagedAsync(int page, int size, CancellationToken cancellationToken)
         {
             return await _context.Authors.Include(a => a.Books)
                 .OrderBy(a => a.LastName)
                 .Skip((page - 1) * size)
                 .Take(size)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Author> AddAsync(Author author)
+        public async Task<Author> AddAsync(Author author, CancellationToken cancellationToken)
         {
             await _context.Authors.AddAsync(author);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return author;
         }
 
-        public async Task<Author> UpdateAsync(Author author)
+        public async Task<Author> UpdateAsync(Author author, CancellationToken cancellationToken)
         {
             _context.Authors.Update(author);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return author;
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task DeleteAsync(Author author, CancellationToken cancellationToken)
         {
-            var author = await _context.Authors.FindAsync(id);
-            if (author == null) return false;
-
             _context.Authors.Remove(author);
-            await _context.SaveChangesAsync();
-            return true;
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+        public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await _context.Authors.AnyAsync(u => u.Id == id);
+            return await _context.Authors.AnyAsync(u => u.Id == id, cancellationToken);
         }
     }
 }

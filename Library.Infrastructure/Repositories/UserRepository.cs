@@ -13,45 +13,41 @@ namespace Library.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<User?> GetByEmail(string email)
+        public async Task<User?> GetByEmail(string email, CancellationToken cancellationToken)
         {
             return await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == email);
+                .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
         }
 
-        public async Task<User?> GetByRefreshToken(string refreshToken)
+        public async Task<User?> GetByRefreshToken(string refreshToken, CancellationToken cancellationToken)
         {
             return await _context.Users
-                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken, cancellationToken);
         }
 
-        public async Task<User> AddAsync(User user)
+        public async Task<User> AddAsync(User user, CancellationToken cancellationToken)
         {
             await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return user;
         }
 
-        public async Task<User> UpdateAsync(User user)
+        public async Task<User> UpdateAsync(User user, CancellationToken cancellationToken)
         {
             _context.Users.Update(user);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return user;
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task DeleteAsync(User user, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return false;
-
             _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            return true;
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+        public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await _context.Users.AnyAsync(u => u.Id == id);
+            return await _context.Users.AnyAsync(u => u.Id == id, cancellationToken);
         }
     }
 }

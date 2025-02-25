@@ -1,8 +1,5 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
-
-using Library.Application.Interfaces.Services;
-using Library.Application.Services;
 using Library.Application.Validators.Authors;
 using Library.Application.Validators.Books;
 using Library.Application.Validators.Users;
@@ -17,11 +14,7 @@ namespace Library.Application
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            services.AddScoped<IBookService, BookService>();
-            services.AddScoped<IAuthorService, AuthorService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IBookBorrowService, BookBorrowService>();
-            services.AddScoped<IFileService, FileService>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
             services.AddValidatorsFromAssemblyContaining<CreateAuthorDtoValidator>();
             services.AddValidatorsFromAssemblyContaining<UpdateAuthorDtoValidator>();

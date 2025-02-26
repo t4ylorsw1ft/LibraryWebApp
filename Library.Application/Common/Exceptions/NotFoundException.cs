@@ -3,7 +3,7 @@
     public class NotFoundException : Exception
     {
         public NotFoundException(Type type, object key)
-            : base($"Entity {type.Name} ({key}) was not found.")
+            : base($"Entity {type.Name} with key {key} was not found.")
         {
 
         }

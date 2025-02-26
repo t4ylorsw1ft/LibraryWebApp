@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Library.Application.Common.Mapping;
-using Library.Application.DTOs.Authors;
 using Library.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Application.DTOs.Users
+namespace Library.Application.UseCases.Users.DTOs
 {
     public class UserDetailsDto : IMapWith<User>
     {

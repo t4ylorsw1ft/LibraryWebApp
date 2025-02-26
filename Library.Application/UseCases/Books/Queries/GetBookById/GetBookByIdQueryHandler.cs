@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Library.Application.Common.Exceptions;
-using Library.Application.DTOs.Books;
 using Library.Application.Interfaces.Repositories;
+using Library.Application.UseCases.Books.DTOs;
 using Library.Domain.Entities;
 using MediatR;
 using System;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Library.Application.UseCases.Books.Queries.GetBookById
-{   
+{
     public class GetBookByIdQueryHandler : IRequestHandler<GetBookByIdQuery, BookDetailsDto>
     {
         private readonly IMapper _mapper;

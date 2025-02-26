@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Library.Application.Common.Exceptions;
-using Library.Application.DTOs.Books;
 using Library.Application.Interfaces.Repositories;
+using Library.Application.UseCases.Books.DTOs;
 using Library.Domain.Entities;
 using MediatR;
 using System;
@@ -28,15 +28,19 @@ namespace Library.Application.UseCases.Books.Commands.UpdateBook
 
         public async Task<BookDetailsDto> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
         {
-            var validationResult = await _validator.ValidateAsync(request.BookDto, cancellationToken);
+            var bookDto = request.BookDto;
+
+            var validationResult = await _validator.ValidateAsync(bookDto, cancellationToken);
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
 
-            var existingBook = await _bookRepository.GetByIdAsync(request.BookDto.Id, cancellationToken);
+            var existingBook = await _bookRepository.GetByIdAsync(bookDto.Id, cancellationToken);
             if (existingBook == null)
-                throw new NotFoundException(typeof(Book), request.BookDto.Id);
+                throw new NotFoundException(typeof(Book), bookDto.Id);
 
-            if (await _bookRepository.GetByISBNAsync(request.BookDto.ISBN, cancellationToken) != null)
+            var bookWithSameISBN = await _bookRepository.GetByISBNAsync(bookDto.ISBN, cancellationToken);
+
+            if (bookWithSameISBN != null && bookWithSameISBN.Id != bookDto.Id)
                 throw new AlreadyExistsException("ISBN");
 
             _mapper.Map(request.BookDto, existingBook);

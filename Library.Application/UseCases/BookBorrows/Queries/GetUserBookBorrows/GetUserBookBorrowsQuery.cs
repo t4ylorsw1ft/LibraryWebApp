@@ -1,4 +1,4 @@
-﻿using Library.Application.DTOs.BookBorrows;
+﻿using Library.Application.UseCases.BookBorrows.DTOs;
 using MediatR;
 using System;
 using System.Collections.Generic;

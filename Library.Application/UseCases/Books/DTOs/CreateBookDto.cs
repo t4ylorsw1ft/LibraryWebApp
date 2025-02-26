@@ -2,7 +2,7 @@
 using Library.Application.Common.Mapping;
 using Library.Domain.Entities;
 
-namespace Library.Application.DTOs.Books
+namespace Library.Application.UseCases.Books.DTOs
 {
     public class CreateBookDto : IMapWith<Book>
     {

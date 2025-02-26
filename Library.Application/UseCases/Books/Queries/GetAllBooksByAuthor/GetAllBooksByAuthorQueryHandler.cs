@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Library.Application.DTOs.Books;
 using Library.Application.Interfaces.Repositories;
+using Library.Application.UseCases.Books.DTOs;
 using MediatR;
 using System;
 using System.Collections.Generic;

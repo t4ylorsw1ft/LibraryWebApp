@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Application.DTOs.BookBorrows
+namespace Library.Application.UseCases.BookBorrows.DTOs
 {
     public class BorrowBookDto
     {

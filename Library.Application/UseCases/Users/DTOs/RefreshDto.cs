@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Library.Application.DTOs.Users
+namespace Library.Application.UseCases.Users.DTOs
 {
     public class RefreshDto
     {
-        public string RefreshToken {  get; set; }
+        public string RefreshToken { get; set; }
     }
 }

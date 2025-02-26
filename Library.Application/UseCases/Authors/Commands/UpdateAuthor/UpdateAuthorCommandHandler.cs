@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using Library.Application.DTOs.Authors;
 using Library.Application.Interfaces.Repositories;
+using Library.Application.UseCases.Authors.DTOs;
 using Library.Domain.Entities;
 using MediatR;
 

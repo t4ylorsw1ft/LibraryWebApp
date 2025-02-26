@@ -1,4 +1,4 @@
-﻿using Library.Application.DTOs.Books;
+﻿using Library.Application.UseCases.Books.DTOs;
 using MediatR;
 
 namespace Library.Application.UseCases.Books.Queries.GetAllBooksByAuthor

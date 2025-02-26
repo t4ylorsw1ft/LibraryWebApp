@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Library.Application.Common.Exceptions;
-using Library.Application.DTOs.Books;
 using Library.Application.Interfaces.Repositories;
+using Library.Application.UseCases.Books.DTOs;
 using Library.Domain.Entities;
 using MediatR;
 using System;
@@ -47,7 +47,10 @@ namespace Library.Application.UseCases.Books.Commands.CreateBook
             var book = _mapper.Map<Book>(request.BookDto);
             book.AvaliableQuantity = book.Quantity;
 
-            var createdBook = await _bookRepository.AddAsync(book, cancellationToken);
+            await _bookRepository.AddAsync(book, cancellationToken);
+
+            var createdBook = await _bookRepository.GetByIdAsync(book.Id, cancellationToken);
+
             return _mapper.Map<BookDetailsDto>(createdBook);
         }
     }

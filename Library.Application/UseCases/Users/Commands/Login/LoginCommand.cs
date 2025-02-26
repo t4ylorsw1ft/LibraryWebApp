@@ -1,4 +1,4 @@
-﻿using Library.Application.DTOs.Users;
+﻿using Library.Application.UseCases.Users.DTOs;
 using MediatR;
 using System;
 using System.Collections.Generic;

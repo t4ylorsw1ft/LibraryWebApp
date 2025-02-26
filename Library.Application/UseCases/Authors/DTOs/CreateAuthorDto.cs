@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Library.Application.Common.Mapping;
+using Library.Application.UseCases.Authors.Commands.CreateAuthor;
 using Library.Domain.Entities;
 
-namespace Library.Application.DTOs.Authors
+namespace Library.Application.UseCases.Authors.DTOs
 {
     public class CreateAuthorDto : IMapWith<Author>
     {

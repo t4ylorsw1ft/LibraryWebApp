@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Library.Application.DTOs.Users;
+using Library.Application.UseCases.Users.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

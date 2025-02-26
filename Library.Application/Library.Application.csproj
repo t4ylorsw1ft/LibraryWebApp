@@ -18,11 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UseCases\Authors\DTOs\" />
-    <Folder Include="UseCases\BookBorrows\DTOs\" />
-    <Folder Include="UseCases\Books\DTOs\" />
     <Folder Include="UseCases\Files\DTOs\" />
-    <Folder Include="UseCases\Users\DTOs\" />
   </ItemGroup>
 
 </Project>

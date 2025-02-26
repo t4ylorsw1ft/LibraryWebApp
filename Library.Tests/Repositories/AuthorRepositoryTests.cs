@@ -15,6 +15,7 @@ namespace Library.Tests.Repositories
     {
         private readonly AppDbContext _context;
         private readonly AuthorRepository _authorRepository;
+        private readonly CancellationToken _cancellationToken;
 
         public AuthorRepositoryTests()
         {
@@ -37,16 +38,16 @@ namespace Library.Tests.Repositories
             var author = new Author
             {
                 Id = Guid.NewGuid(),
-                FirstName = "John",
-                LastName = "Doe",
-                BirthDate = new DateTime(1980, 1, 1),
+                FirstName = "Ernest",
+                LastName = "Hemingway",
+                BirthDate = new DateTime(1899, 7, 21),
                 Country = "USA"
             };
 
             _context.Authors.Add(author);
             await _context.SaveChangesAsync();
 
-            var result = await _authorRepository.GetByIdAsync(author.Id);
+            var result = await _authorRepository.GetByIdAsync(author.Id, _cancellationToken);
 
             Assert.NotNull(result);
             Assert.Equal(author.Id, result.Id);
@@ -59,7 +60,7 @@ namespace Library.Tests.Repositories
         [Fact]
         public async Task GetByIdAsync_AuthorDoesNotExist_ReturnsNull()
         {
-            var result = await _authorRepository.GetByIdAsync(Guid.NewGuid());
+            var result = await _authorRepository.GetByIdAsync(Guid.NewGuid(), _cancellationToken);
 
             Assert.Null(result);
         }
@@ -76,7 +77,7 @@ namespace Library.Tests.Repositories
                 Country = "USA"
             };
 
-            await _authorRepository.AddAsync(author);
+            await _authorRepository.AddAsync(author, _cancellationToken);
             var result = await _context.Authors.FindAsync(author.Id);
 
             Assert.NotNull(result);
@@ -109,10 +110,10 @@ namespace Library.Tests.Repositories
                 Country = "England"
             };
 
-            await _authorRepository.AddAsync(author1);
+            await _authorRepository.AddAsync(author1, _cancellationToken);
             await _context.SaveChangesAsync();
 
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await _authorRepository.AddAsync(author2));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await _authorRepository.AddAsync(author2, _cancellationToken));
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Library.WebApi.Controllers
         /// </summary>
         /// <param name="file">The file to upload.</param>
         /// <returns>File path of the uploaded file.</returns>
-        [HttpPost("upload")]
+        [HttpPost()]
         public async Task<IActionResult> UploadFile(IFormFile file, CancellationToken cancellationToken)
         {
             if (file == null || file.Length == 0)
@@ -45,7 +45,7 @@ namespace Library.WebApi.Controllers
         /// </summary>
         /// <param name="filePath">The path of the file to download.</param>
         /// <returns>The file content for download.</returns>
-        [HttpGet("download")]
+        [HttpGet()]
         public async Task<IActionResult> GetFile([FromQuery] string filePath, CancellationToken cancellationToken)
         {
             var fileData = await _mediator.Send(new GetImageQuery(filePath), cancellationToken);
@@ -57,7 +57,7 @@ namespace Library.WebApi.Controllers
         /// </summary>
         /// <param name="filePath">The path of the file to delete.</param>
         /// <returns>OK response when the file is deleted.</returns>
-        [HttpDelete("delete")]
+        [HttpDelete()]
         public async Task<IActionResult> DeleteFile([FromQuery] string filePath, CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteImageCommand(filePath), cancellationToken);

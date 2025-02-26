@@ -1,7 +1,7 @@
-﻿using Library.Application.DTOs.BookBorrows;
-using Library.Application.Interfaces.Services;
+﻿using Library.Application.Interfaces.Services;
 using Library.Application.UseCases.BookBorrows.Commands.BorrowBook;
 using Library.Application.UseCases.BookBorrows.Commands.ReturnBook;
+using Library.Application.UseCases.BookBorrows.DTOs;
 using Library.Application.UseCases.BookBorrows.Queries.GetUserBookBorrows;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Library.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/book-borrows")]
     [ApiController]
     [Authorize]
     public class BookBorrowController : ControllerBase
@@ -27,7 +27,7 @@ namespace Library.WebApi.Controllers
         /// </summary>
         /// <param name="bookId">ID of the book to borrow.</param>
         /// <returns>OK response when the book is borrowed successfully.</returns>
-        [HttpPost("borrow")]
+        [HttpPost()]
         public async Task<IActionResult> BorrowBook(Guid bookId, CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(User.FindFirst("userId")?.Value);
@@ -51,7 +51,7 @@ namespace Library.WebApi.Controllers
         /// Get all books borrowed by the current user.
         /// </summary>
         /// <returns>A list of books borrowed by the current user.</returns>
-        [HttpGet("user")]
+        [HttpGet()]
         public async Task<ActionResult<List<BookBorrowLookupDto>>> GetAllByUser(CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(User.FindFirst("userId")?.Value);

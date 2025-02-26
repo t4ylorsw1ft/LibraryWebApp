@@ -1,16 +1,18 @@
-﻿using Library.Application.DTOs.Authors;
-using Library.Application.UseCases.Authors.Commands.CreateAuthor;
+﻿using Library.Application.UseCases.Authors.Commands.CreateAuthor;
 using Library.Application.UseCases.Authors.Commands.DeleteAuthor;
 using Library.Application.UseCases.Authors.Commands.UpdateAuthor;
+using Library.Application.UseCases.Authors.DTOs;
 using Library.Application.UseCases.Authors.Queries.GetAllAuthorsPaged;
 using Library.Application.UseCases.Authors.Queries.GetAuthorById;
+using Library.Application.UseCases.Books.DTOs;
+using Library.Application.UseCases.Books.Queries.GetAllBooksByAuthor;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/authors")]
     [ApiController]
     [Authorize]
     public class AuthorController : ControllerBase
@@ -94,6 +96,18 @@ namespace Library.WebApi.Controllers
         {
             await _mediator.Send(new DeleteAuthorCommand(id), cancellationToken);
             return NoContent();
+        }
+
+        /// <summary>
+        /// Get all books by a specific author.
+        /// </summary>
+        /// <param name="id">Author's ID.</param>
+        /// <returns>A list of books by the author.</returns>
+        [HttpGet("{id}/books")]
+        public async Task<ActionResult<List<BookLookupDto>>> GetAllByAuthor(Guid id, CancellationToken cancellationToken)
+        {
+            var books = await _mediator.Send(new GetAllBooksByAuthorQuery(id), cancellationToken);
+            return Ok(books);
         }
     }
 }

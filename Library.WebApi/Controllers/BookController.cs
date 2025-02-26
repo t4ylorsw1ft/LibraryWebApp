@@ -1,7 +1,7 @@
-﻿using Library.Application.DTOs.Books;
-using Library.Application.UseCases.Books.Commands.CreateBook;
+﻿using Library.Application.UseCases.Books.Commands.CreateBook;
 using Library.Application.UseCases.Books.Commands.DeleteBook;
 using Library.Application.UseCases.Books.Commands.UpdateBook;
+using Library.Application.UseCases.Books.DTOs;
 using Library.Application.UseCases.Books.Queries.GetAllBooksByAuthor;
 using Library.Application.UseCases.Books.Queries.GetAllBooksPaged;
 using Library.Application.UseCases.Books.Queries.GetBookById;
@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/books")]
     [ApiController]
     [Authorize]
     public class BookController : ControllerBase
@@ -37,17 +37,7 @@ namespace Library.WebApi.Controllers
             return Ok(books);
         }
 
-        /// <summary>
-        /// Get all books by a specific author.
-        /// </summary>
-        /// <param name="authorId">Author's ID.</param>
-        /// <returns>A list of books by the author.</returns>
-        [HttpGet("author/{authorId}")]
-        public async Task<ActionResult<List<BookLookupDto>>> GetAllByAuthor(Guid authorId, CancellationToken cancellationToken)
-        {
-            var books = await _mediator.Send(new GetAllBooksByAuthorQuery(authorId), cancellationToken);
-            return Ok(books);
-        }
+
 
         /// <summary>
         /// Get a book by its ID.

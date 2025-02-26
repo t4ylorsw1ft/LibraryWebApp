@@ -1,14 +1,14 @@
-﻿using Library.Application.DTOs.Users;
-using Library.Application.Interfaces.Services;
+﻿using Library.Application.Interfaces.Services;
 using Library.Application.UseCases.Users.Commands.Login;
 using Library.Application.UseCases.Users.Commands.Refresh;
 using Library.Application.UseCases.Users.Commands.Register;
+using Library.Application.UseCases.Users.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {

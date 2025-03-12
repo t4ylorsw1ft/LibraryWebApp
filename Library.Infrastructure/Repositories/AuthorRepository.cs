@@ -1,4 +1,4 @@
-﻿using Library.Application.Interfaces.Repositories;
+﻿using Library.Domain.Interfaces.Repositories;
 using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;

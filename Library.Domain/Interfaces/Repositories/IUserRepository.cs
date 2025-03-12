@@ -1,6 +1,6 @@
 ﻿using Library.Domain.Entities;
 
-namespace Library.Application.Interfaces.Repositories
+namespace Library.Domain.Interfaces.Repositories
 {
     public interface IUserRepository
     {

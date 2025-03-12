@@ -1,5 +1,5 @@
-﻿using Library.Application.Interfaces;
-using Library.Application.Interfaces.Repositories;
+﻿using Library.Infrastructure.Interfaces;
+using Library.Domain.Interfaces.Repositories;
 using Library.Application.Interfaces.Security;
 using Library.Application.Interfaces.Services;
 using Library.Infrastructure.Repositories;
@@ -31,7 +31,8 @@ namespace Library.Infrastructure
 
             services.AddScoped<IFileStorageService, FileStorageService>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
-            services.AddScoped<IJwtProvider, JWTProvider>();
+            services.AddScoped<IJwtProvider, JwtProvider>();
+            services.AddScoped<IJwtValidator, JwtValidator>();
             return services;
         }
 

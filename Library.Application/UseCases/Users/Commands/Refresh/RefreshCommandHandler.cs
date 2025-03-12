@@ -34,7 +34,7 @@ namespace Library.Application.UseCases.Users.Commands.Refresh
             if (user == null)
                 throw new NotFoundException(typeof(User), refreshToken);
 
-            if (_jwtValidator.ValidateTokenByExpiration(refreshToken))
+            if (!_jwtValidator.ValidateTokenByExpiration(refreshToken))
                 throw new Exception("Token has expired");
 
             string newAccessToken = _jwtProvider.GenerateAccessToken(user);

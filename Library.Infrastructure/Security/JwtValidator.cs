@@ -14,7 +14,7 @@ namespace Library.Infrastructure.Security
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var securityToken = tokenHandler.ReadToken(token);
-            return securityToken.ValidTo > DateTime.Now;
+            return securityToken.ValidTo > DateTime.UtcNow;
         }
     }
 }

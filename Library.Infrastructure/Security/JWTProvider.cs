@@ -48,7 +48,12 @@ namespace Library.Infrastructure.Security
                 new("body", Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))),
             ];
 
+            var signingCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),
+                SecurityAlgorithms.HmacSha256);
+
             var refreshToken = new JwtSecurityToken(
+                signingCredentials: signingCredentials,
                 claims: claims,
                 expires: DateTime.Now.AddDays(_options.RefreshExpiresDays)
             );

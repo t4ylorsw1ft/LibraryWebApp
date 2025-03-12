@@ -1,6 +1,6 @@
 services:
     library.webapi:
-        image: ${DOCKER_REGISTRY-}librarywebapi
+        image: librarywebapi
         build:
             context: .
             dockerfile: Library.WebApi/Dockerfile

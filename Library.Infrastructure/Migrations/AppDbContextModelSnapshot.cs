@@ -148,8 +148,8 @@ namespace Library.Infrastructure.Migrations
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
@@ -168,6 +168,17 @@ namespace Library.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("4fa85f64-5717-4562-b3fc-2c963f66afa6"),
+                            Email = "admin@mail.ru",
+                            PasswordHash = "$2a$11$TJlQpqthplkTTIO30qfKYed0/nXXcfHVu/SszmD2U2K6cdDmB/z3q",
+                            RefreshToken = "aaaaaa",
+                            Role = 1,
+                            Username = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Library.Domain.Entities.Book", b =>

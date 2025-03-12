@@ -1,5 +1,5 @@
 ﻿using Library.Application.Common.Exceptions;
-using Library.Application.Interfaces.Repositories;
+using Library.Domain.Interfaces.Repositories;
 using Library.Application.Interfaces.Security;
 using Library.Application.UseCases.Users.DTOs;
 using Library.Domain.Entities;
@@ -16,11 +16,13 @@ namespace Library.Application.UseCases.Users.Commands.Refresh
     {
         private readonly IUserRepository _userRepository;
         private readonly IJwtProvider _jwtProvider;
+        private readonly IJwtValidator _jwtValidator;
 
-        public RefreshCommandHandler(IUserRepository userRepository, IJwtProvider jwtProvider)
+        public RefreshCommandHandler(IUserRepository userRepository, IJwtProvider jwtProvider, IJwtValidator jwtValidator)
         {
             _userRepository = userRepository;
             _jwtProvider = jwtProvider;
+            _jwtValidator = jwtValidator;
         }
 
         public async Task<JwtPairDto> Handle(RefreshCommand request, CancellationToken cancellationToken)
@@ -31,6 +33,9 @@ namespace Library.Application.UseCases.Users.Commands.Refresh
 
             if (user == null)
                 throw new NotFoundException(typeof(User), refreshToken);
+
+            if (_jwtValidator.ValidateTokenByExpiration(refreshToken))
+                throw new Exception("Token has expired");
 
             string newAccessToken = _jwtProvider.GenerateAccessToken(user);
             string newRefreshToken = _jwtProvider.GenerateRefreshToken();

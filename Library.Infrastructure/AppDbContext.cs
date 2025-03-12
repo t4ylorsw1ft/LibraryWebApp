@@ -1,4 +1,4 @@
-﻿using Library.Application.Interfaces;
+﻿using Library.Infrastructure.Interfaces;
 using Library.Domain.Entities;
 using Library.Infrastructure.Configurations;
 using Library.Infrastructure.Security;
@@ -17,21 +17,6 @@ namespace Library.Infrastructure
             : base(options) 
         {
 
-            if (!Users.Any())
-            {
-                var admin = new User
-                {
-                    Username = "admin",
-                    Email = "admin@mail.ru",
-                    PasswordHash = "$2a$11$TJlQpqthplkTTIO30qfKYed0/nXXcfHVu/SszmD2U2K6cdDmB/z3q",
-                    RefreshToken = "aaaaaa",
-                    Role = UserRole.Admin
-                };
-
-
-                Users.Add(admin);
-                SaveChanges();
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,6 +25,16 @@ namespace Library.Infrastructure
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
             modelBuilder.ApplyConfiguration(new BookConfiguration());
             modelBuilder.ApplyConfiguration(new BookBorrowConfiguration());
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = Guid.Parse("4fa85f64-5717-4562-b3fc-2c963f66afa6"),
+                    Username = "admin",
+                    Email = "admin@mail.ru",
+                    PasswordHash = "$2a$11$TJlQpqthplkTTIO30qfKYed0/nXXcfHVu/SszmD2U2K6cdDmB/z3q",
+                    RefreshToken = "aaaaaa",
+                    Role = UserRole.Admin
+                });
         }
     }
 }

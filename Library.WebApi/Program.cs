@@ -1,9 +1,11 @@
 using Library.Application;
 using Library.Application.Common.Mapping;
-using Library.Application.Interfaces;
+using Library.Infrastructure.Interfaces;
 using Library.Infrastructure;
 using Library.Infrastructure.Security;
+using Library.WebApi.Extensions;
 using Library.WebApi.Middleware;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -12,37 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
 
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
-
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "¬ведите токен в формате: Bearer your-token-here",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new List<string>()
-        }
-    });
-});
+builder.Services.AddSwaggerConfiguration();
 
 builder.Services.AddMemoryCache();
 
@@ -60,7 +33,7 @@ var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>(
 builder.Services.AddApiAuthentication(Options.Create(jwtOptions));
 
 builder.Services.AddAuthorization(options =>
-{
+{   
     options.AddPolicy("AdminPolicy", policy =>
     {
         policy.RequireClaim("Role", "Admin");

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
-using Library.Application.Interfaces.Repositories;
+using Library.Domain.Interfaces.Repositories;
 using Library.Application.UseCases.Authors.Commands.UpdateAuthor;
 using Library.Application.UseCases.Authors.DTOs;
 using Library.Domain.Entities;

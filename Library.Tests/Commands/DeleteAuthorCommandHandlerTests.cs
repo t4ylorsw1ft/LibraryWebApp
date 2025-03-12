@@ -1,5 +1,5 @@
 ﻿using Library.Application.Common.Exceptions;
-using Library.Application.Interfaces.Repositories;
+using Library.Domain.Interfaces.Repositories;
 using Library.Application.UseCases.Authors.Commands.DeleteAuthor;
 using Library.Domain.Entities;
 using Moq;

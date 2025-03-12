@@ -24,7 +24,7 @@ namespace Library.Infrastructure.Configurations
 
             builder.Property(u => u.RefreshToken)
                 .IsRequired()
-                .HasMaxLength(200);
+                .HasMaxLength(300);
 
             builder.Property(u => u.Role)
                 .IsRequired()

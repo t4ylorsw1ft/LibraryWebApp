@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Library.Application.Common.Exceptions;
-using Library.Application.Interfaces.Repositories;
+using Library.Domain.Interfaces.Repositories;
 using Library.Application.Interfaces.Security;
 using Library.Application.UseCases.Users.DTOs;
 using Library.Domain.Entities;

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Library.Application.Interfaces.Repositories;
+using Library.Domain.Interfaces.Repositories;
 using Library.Application.UseCases.Authors.DTOs;
 using MediatR;
 

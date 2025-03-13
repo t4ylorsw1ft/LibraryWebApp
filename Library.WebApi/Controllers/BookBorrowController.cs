@@ -43,7 +43,8 @@ namespace Library.WebApi.Controllers
         [HttpPost("return/{bookBorrowId}")]
         public async Task<IActionResult> ReturnBook(Guid bookBorrowId, CancellationToken cancellationToken)
         {
-            await _mediator.Send(new ReturnBookCommand(bookBorrowId), cancellationToken);
+            var userId = Guid.Parse(User.FindFirst("userId")?.Value);
+            await _mediator.Send(new ReturnBookCommand(bookBorrowId, userId), cancellationToken);
             return Ok();
         }
 

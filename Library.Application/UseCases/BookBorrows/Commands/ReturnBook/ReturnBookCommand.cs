@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Library.Application.UseCases.BookBorrows.Commands.ReturnBook
 {
-    public record ReturnBookCommand(Guid BookBorrowId) : IRequest;
+    public record ReturnBookCommand(Guid BookBorrowId, Guid UserId) : IRequest;
 }

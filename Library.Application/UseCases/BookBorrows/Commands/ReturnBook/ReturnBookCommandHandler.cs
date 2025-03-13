@@ -25,6 +25,9 @@ namespace Library.Application.UseCases.BookBorrows.Commands.ReturnBook
         {
             BookBorrow? bookBorrow = await _bookBorrowRepository.GetByIdAsync(request.BookBorrowId, cancellationToken);
 
+            if (request.UserId != bookBorrow.UserId)
+                throw new UnauthorizedAccessException();
+
             if (bookBorrow == null)
                 throw new NotFoundException(typeof(BookBorrow), request.BookBorrowId);
 

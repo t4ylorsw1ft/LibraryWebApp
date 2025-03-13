@@ -20,7 +20,7 @@ namespace Library.Application.UseCases.Files.Commands.DeleteImage
         public async Task Handle(DeleteImageCommand request, CancellationToken cancellationToken)
         {
             if (!_fileStorageService.DeleteFile(request.FilePath))
-                throw new FileNotFoundException(request.FilePath);
+                throw new FileNotFoundException(request.FilePath + " not found");
         }
     }
 }

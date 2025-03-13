@@ -36,11 +36,15 @@ namespace Library.WebApi.Middleware
                     break;
                 case NotFoundException:
                     code = HttpStatusCode.NotFound;
-                    result = ex.Message;
+                    result = JsonSerializer.Serialize(new { error = ex.Message });
                     break;
                 case LoginException:
                     code = HttpStatusCode.BadRequest;
-                    result = ex.Message;
+                    result = JsonSerializer.Serialize(new { error = ex.Message });
+                    break;
+                case UnauthorizedAccessException:
+                    code = HttpStatusCode.Forbidden;
+                    result = JsonSerializer.Serialize(new { error = ex.Message });
                     break;
             }
             context.Response.ContentType = "application/json";

@@ -23,9 +23,11 @@ namespace Library.WebApi.Controllers
 
         /// <summary>
         /// Upload a file to the server.
+        /// Requires Admin role.
         /// </summary>
         /// <param name="file">The file to upload.</param>
         /// <returns>File path of the uploaded file.</returns>
+        [Authorize("AdminPolicy")]
         [HttpPost()]
         public async Task<IActionResult> UploadFile(IFormFile file, CancellationToken cancellationToken)
         {
@@ -54,9 +56,11 @@ namespace Library.WebApi.Controllers
 
         /// <summary>
         /// Delete a file from the server.
+        /// Requires Admin role.
         /// </summary>
         /// <param name="filePath">The path of the file to delete.</param>
         /// <returns>OK response when the file is deleted.</returns>
+        [Authorize("AdminPolicy")]
         [HttpDelete()]
         public async Task<IActionResult> DeleteFile([FromQuery] string filePath, CancellationToken cancellationToken)
         {

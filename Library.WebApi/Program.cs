@@ -22,11 +22,9 @@ builder.Services.AddMemoryCache();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddAutoMapper(config =>
 {
-    config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
-    config.AddProfile(new AssemblyMappingProfile(typeof(IAppDbContext).Assembly));
+    config.AddProfile(new AssemblyMappingProfile(Assembly.Load("Library.Application")));
 });
 
 var jwtOptions = builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>();
